@@ -11,8 +11,8 @@ const withAuth = (WrappedComponent: React.FC) => {
 
         useEffect(() => {
             setIsMounted(true);
-
-            // Check for token
+            // We use a state for checking if the component was mounted, this solve hydratation problem
+            // Check for token. This needs to be checked only in the client side
             if (!localStorage.getItem(USER_TOKEN_KEY)) {
                 router.replace('/');
             }
