@@ -18,14 +18,6 @@ export default function Page() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<Inputs>();
   const { register: registerUser } = useUser();
   const router = useRouter();
-  useEffect(() => {
-    const token = localStorage.getItem(USER_TOKEN_KEY);
-
-    if (token) {
-      // if user is authenticated (that means token in localStorage) redirects him
-      router.push('/home');
-    }
-  }, [router]);
 
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
     try {

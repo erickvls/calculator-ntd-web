@@ -1,15 +1,8 @@
-import { USER_TOKEN_KEY } from "../utils/constants";
 
 export const api = async (path: string, method: 'POST' | 'GET', body: object = {}) => {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
     };
-
-    const token = localStorage.getItem(USER_TOKEN_KEY);
-
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
 
     try {
         const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {

@@ -3,14 +3,24 @@ import { api } from "../services/api.service"
 import { USER_TOKEN_KEY } from "../utils/constants";
 
 
+const setCookie = (name: string, value: string, days: number) => {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+};
+
+const deleteCookie = (name: string) => {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+};
+
+
 export const useUser = () => {
 
     const router = useRouter();
 
     const handleSuccessfulAuthentication = (response: Record<string, string>) => {
         if (response.token) {
-            localStorage.setItem(USER_TOKEN_KEY, response.token);
-            router.replace('home');
+            setCookie(USER_TOKEN_KEY, response.token, 1);
+            router.replace('/home');
         }
     }
 
@@ -29,7 +39,7 @@ export const useUser = () => {
     }
 
     const logout = () => {
-        localStorage.clear();
+        deleteCookie(USER_TOKEN_KEY);
         router.replace('/');
     }
 

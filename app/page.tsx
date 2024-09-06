@@ -19,16 +19,6 @@ export default function Page() {
     const { login: loginUser } = useUser();
     const router = useRouter();
 
-    useEffect(() => {
-        const token = localStorage.getItem(USER_TOKEN_KEY);
-
-        if (token) {
-            // if user is authenticated (that means token in localStorage) redirects him
-            router.push('/home');
-        }
-    }, [router]);
-
-
     const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
         try {
             const result = await loginUser(email, password);
