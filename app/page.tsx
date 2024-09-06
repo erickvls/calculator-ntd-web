@@ -45,8 +45,7 @@ export default function Page() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minHeight: '100vh',
-                backgroundColor: '#f0f0f0',
+                marginTop: 20
             }}
         >
             <Typography variant="h4" gutterBottom>
