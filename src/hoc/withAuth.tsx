@@ -2,22 +2,26 @@
 'use client'
 import { useRouter } from 'next/navigation';
 import { USER_TOKEN_KEY } from '../utils/constants';
-import { JSX } from 'react';
+import { JSX, useEffect, useState } from 'react';
 
 const withAuth = (WrappedComponent: React.FC) => {
     return (props: JSX.IntrinsicAttributes) => {
-        if (typeof window !== 'undefined') {
-            const router = useRouter();
+        const [isMounted, setIsMounted] = useState(false);
+        const router = useRouter();
 
+        useEffect(() => {
+            setIsMounted(true);
+
+            // Check for token
             if (!localStorage.getItem(USER_TOKEN_KEY)) {
                 router.replace('/');
-                return null;
             }
+        }, [router]);
 
-            return <WrappedComponent {...props} />;
-        }
+        if (!isMounted) return null;
 
-        return null;
+        // Render the wrapped component only if the component has mounted and the user is authenticated
+        return <WrappedComponent {...props} />;
     };
 };
 
