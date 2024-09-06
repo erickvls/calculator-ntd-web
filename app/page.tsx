@@ -1,95 +1,96 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useUser } from '@/src/hooks/useUser';
+import { Button, FormControl, FormHelperText, TextField, Typography, Box, CircularProgress } from '@mui/material';
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+type Inputs = {
+    email: string
+    password: string
+}
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+export default function Page() {
+    const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<Inputs>();
+    const { register: registerUser } = useUser();
+
+    const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
+        const result = await registerUser(email, password);
+        console.log(result);
+    }
+
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh', // Centralizar verticalmente
+            }}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+            <Typography variant="h4" gutterBottom>
+                Calculator API - Sign Up
+            </Typography>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+            <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmit)}
+                sx={{
+                    backgroundColor: '#fff',
+                    padding: 4,
+                    borderRadius: 2,
+                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                    width: '100%',
+                    maxWidth: 400, // Para garantir que o formulário não seja muito largo
+                }}
+            >
+                <FormControl fullWidth margin="normal" error={!!errors.email}>
+                    <TextField
+                        required
+                        fullWidth
+                        label="Username or Email"
+                        {...register('email', {
+                            required: 'Email is required',
+                            pattern: {
+                                value: /^\S+@\S+$/i,
+                                message: 'Invalid email format',
+                            },
+                        })}
+                        error={!!errors.email}
+                        helperText={errors.email ? errors.email.message : ''}
+                    />
+                </FormControl>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
+                <FormControl fullWidth margin="normal" error={!!errors.password}>
+                    <TextField
+                        required
+                        fullWidth
+                        label="Password"
+                        type="password"
+                        {...register('password', {
+                            required: 'Password is required',
+                            minLength: {
+                                value: 6,
+                                message: 'Password must be at least 6 characters',
+                            },
+                        })}
+                        error={!!errors.password}
+                        helperText={errors.password ? errors.password.message : ''}
+                    />
+                </FormControl>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    disabled={isSubmitting} // Desativa o botão enquanto submete
+                >
+                    {isSubmitting ? <CircularProgress size={24} /> : 'Register Now'}
+                </Button>
+            </Box>
+        </Box>
+    );
 }
