@@ -1,9 +1,13 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useUser } from '@/src/hooks/useUser';
-import { Button, FormControl, FormHelperText, TextField, Typography, Box, CircularProgress } from '@mui/material';
+import { Button, FormControl, TextField, Typography, Box, CircularProgress } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importando o CSS do Toast
+import { USER_TOKEN_KEY } from '@/src/utils/constants';
+import { useRouter } from 'next/navigation';
 
 type Inputs = {
     email: string
@@ -13,10 +17,23 @@ type Inputs = {
 export default function Page() {
     const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<Inputs>();
     const { register: registerUser } = useUser();
+    const router = useRouter();
+    useEffect(() => {
+        const token = localStorage.getItem(USER_TOKEN_KEY);
+
+        if (token) {
+            // if user is authenticated (that means token in localStorage) redirects him
+            router.push('/home');
+        }
+    }, [router]);
 
     const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
-        const result = await registerUser(email, password);
-        console.log(result);
+        try {
+            const result = await registerUser(email, password);
+            toast.success('Registration successful!');
+        } catch (error: any) {
+            toast.error(error.message || 'Registration failed');
+        }
     }
 
     return (
@@ -26,11 +43,12 @@ export default function Page() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                minHeight: '100vh', // Centralizar verticalmente
+                minHeight: '100vh',
+                backgroundColor: '#f0f0f0',
             }}
         >
             <Typography variant="h4" gutterBottom>
-                Calculator API - Sign Up
+                Calculator - Sign Up
             </Typography>
 
             <Box
@@ -42,7 +60,7 @@ export default function Page() {
                     borderRadius: 2,
                     boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                     width: '100%',
-                    maxWidth: 400, // Para garantir que o formulário não seja muito largo
+                    maxWidth: 400,
                 }}
             >
                 <FormControl fullWidth margin="normal" error={!!errors.email}>
@@ -86,11 +104,13 @@ export default function Page() {
                     color="primary"
                     fullWidth
                     sx={{ mt: 2 }}
-                    disabled={isSubmitting} // Desativa o botão enquanto submete
+                    disabled={isSubmitting}
                 >
                     {isSubmitting ? <CircularProgress size={24} /> : 'Register Now'}
                 </Button>
             </Box>
+
+            <ToastContainer position="top-center" />
         </Box>
     );
 }
