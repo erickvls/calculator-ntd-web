@@ -1,23 +1,24 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { useUser } from '@/src/hooks/useUser';
-import { Button, FormControl, TextField, Typography, Box, CircularProgress } from '@mui/material';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Importando o CSS do Toast
-import { USER_TOKEN_KEY } from '@/src/utils/constants';
+import { Button, FormControl, TextField, Typography, Box, CircularProgress, Link } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { USER_TOKEN_KEY } from '@/src/utils/constants';
 
 type Inputs = {
-    email: string
-    password: string
-}
+    email: string;
+    password: string;
+};
 
 export default function Page() {
     const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<Inputs>();
-    const { register: registerUser } = useUser();
+    const { login: loginUser } = useUser();
     const router = useRouter();
+
     useEffect(() => {
         const token = localStorage.getItem(USER_TOKEN_KEY);
 
@@ -27,12 +28,13 @@ export default function Page() {
         }
     }, [router]);
 
+
     const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
         try {
-            const result = await registerUser(email, password);
-            toast.success('Registration successful!');
+            const result = await loginUser(email, password);
+            router.push('/home');
         } catch (error: any) {
-            toast.error(error.message || 'Registration failed');
+            toast.error(error.message || 'Login failed');
         }
     }
 
@@ -48,7 +50,7 @@ export default function Page() {
             }}
         >
             <Typography variant="h4" gutterBottom>
-                Calculator - Sign Up
+                Calculator - Log In
             </Typography>
 
             <Box
@@ -106,8 +108,15 @@ export default function Page() {
                     sx={{ mt: 2 }}
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? <CircularProgress size={24} /> : 'Register Now'}
+                    {isSubmitting ? <CircularProgress size={24} /> : 'Log In'}
                 </Button>
+
+                <Typography align="center" sx={{ mt: 2 }}>
+                    Don’t have an account?{' '}
+                    <Link href="/signup" underline="hover">
+                        Create a new account
+                    </Link>
+                </Typography>
             </Box>
 
             <ToastContainer position="top-center" />
