@@ -2,10 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { USER_TOKEN_KEY } from '@/src/utils/constants';
 
-
 export function middleware(req: NextRequest) {
     const token = req.cookies.get(USER_TOKEN_KEY);
 
+    // it checks if token is present
+    if (!token) {
+        return NextResponse.redirect(new URL('/', req.url));
+    }
 
     if (token) {
         // it checks if is root (login) or sign up page
@@ -23,5 +26,5 @@ export function middleware(req: NextRequest) {
 
 // Set up middleware for specific routes
 export const config = {
-    matcher: ['/', '/signup', '/home/:path*'],
+    matcher: ['/home/:path*', "/records"],
 };
