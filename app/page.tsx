@@ -1,13 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useUser } from '@/src/hooks/useUser';
 import { Button, FormControl, TextField, Typography, Box, CircularProgress, Link } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { USER_TOKEN_KEY } from '@/src/utils/constants';
+import { toast } from 'react-toastify';
 
 type Inputs = {
     email: string;
@@ -108,7 +105,6 @@ export default function Page() {
                 </Typography>
             </Box>
 
-            <ToastContainer position="top-center" />
         </Box>
     );
 }

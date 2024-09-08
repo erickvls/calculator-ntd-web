@@ -4,9 +4,7 @@ import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useUser } from '@/src/hooks/useUser';
 import { Button, FormControl, TextField, Typography, Box, CircularProgress, Link } from '@mui/material';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { USER_TOKEN_KEY } from '@/src/utils/constants';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 type Inputs = {
@@ -108,7 +106,6 @@ export default function Page() {
         </Typography>
       </Box>
 
-      <ToastContainer position="top-center" />
     </Box>
   );
 }
