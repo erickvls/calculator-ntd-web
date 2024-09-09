@@ -19,7 +19,7 @@ export default function Page() {
   const [showNumberFields, setShowNumberFields] = useState<boolean>(true);
   const [buttonText, setButtonText] = useState<string>('Calculate');
 
-  const { control, handleSubmit } = useForm<Inputs>({
+  const { control, handleSubmit, reset } = useForm<Inputs>({
     defaultValues: {
       number1: 0,
       number2: 0,
@@ -52,6 +52,14 @@ export default function Page() {
     setIsNumber2Disabled(selectedOperation === Operation.SQUARE_ROOT);
     setShowNumberFields(selectedOperation !== Operation.RANDOM_STRING);
     setButtonText(selectedOperation === Operation.RANDOM_STRING ? 'Generate' : 'Calculate');
+
+    reset({
+      number1: 0,
+      number2: 0,
+      operation: selectedOperation
+    });
+
+    setResult(null);
   };
 
   return (
