@@ -102,7 +102,7 @@ function Page() {
                 <MenuItem value={Operation.ADDITION}>Addition</MenuItem>
                 <MenuItem value={Operation.SUBTRACTION}>Subtraction</MenuItem>
                 <MenuItem value={Operation.MULTIPLICATION}>Multiplication</MenuItem>
-                <MenuItem value={Operation.DIVISION}>DIVISION</MenuItem>
+                <MenuItem value={Operation.DIVISION}>Division</MenuItem>
                 <MenuItem value={Operation.SQUARE_ROOT}>Square Root</MenuItem>
               </Select>
             )}

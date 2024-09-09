@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation"
 import { api } from "../services/api.service"
 import { USER_TOKEN_KEY } from "../utils/constants";
-import Cookies from 'js-cookie';
 
 const setCookie = (name: string, value: string, days: number) => {
     const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
@@ -18,7 +17,6 @@ export const useUser = () => {
     const handleSuccessfulAuthentication = (response: Record<string, string>) => {
         if (response.token) {
             setCookie(USER_TOKEN_KEY, response.token, 1);
-            Cookies.set(USER_TOKEN_KEY, response.token, { expires: 1 })
             router.replace('/home');
         }
     }
