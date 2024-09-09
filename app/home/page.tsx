@@ -70,7 +70,7 @@ export default function Page() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          marginTop: 20,
+          marginTop: 10,
         }}
       >
         <Typography variant="h4" gutterBottom>
