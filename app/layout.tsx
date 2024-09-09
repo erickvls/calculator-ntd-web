@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className} style={{ backgroundColor: '#f5f5f5' }}>
+      <body className={inter.className} style={{ backgroundColor: '#f5f5f5', margin: 0, padding: 0 }}>
         <ToastContainer />
         {children}
       </body>
