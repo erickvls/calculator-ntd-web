@@ -2,7 +2,7 @@
 
 import AuthenticatedLayout from "@/src/components/AuthenticatedLayout";
 import { Operation, useCalculator } from "@/src/hooks/useCalculator";
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from 'react-toastify';
@@ -13,9 +13,11 @@ type Inputs = {
   operation: Operation;
 };
 
-
 export default function Page() {
   const [result, setResult] = useState<string | null>(null);
+  const [isNumber2Disabled, setIsNumber2Disabled] = useState<boolean>(false);
+  const [showNumberFields, setShowNumberFields] = useState<boolean>(true);
+  const [buttonText, setButtonText] = useState<string>('Calculate');
 
   const { control, handleSubmit } = useForm<Inputs>({
     defaultValues: {
@@ -27,16 +29,24 @@ export default function Page() {
 
   const { calculate } = useCalculator();
 
-
   const onSubmit = async ({ number1, number2, operation }: Inputs) => {
     try {
       const { operationResponse } = await calculate(number1, number2, operation);
-
       setResult(operationResponse);
     } catch (error) {
-      console.log(error);
-      toast.error(error?.message ?? 'calcula direito arrombado fdp')
+      let errorMessage = 'Something went wrong';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
     }
+  };
+
+  const handleOperationChange = (event: SelectChangeEvent<Operation>) => {
+    const selectedOperation = event.target.value as Operation;
+    setIsNumber2Disabled(selectedOperation === Operation.SQUARE_ROOT);
+    setShowNumberFields(selectedOperation !== Operation.RANDOM_STRING);
+    setButtonText(selectedOperation === Operation.RANDOM_STRING ? 'Generate' : 'Calculate');
   };
 
   return (
@@ -62,37 +72,42 @@ export default function Page() {
           width: '100%',
           maxWidth: 400,
         }}>
-          <FormControl fullWidth margin="normal">
-            <Controller
-              name="number1"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Number 1"
-                  type="number"
-                  fullWidth
-                  required
-                />
-              )}
-            />
-          </FormControl>
+          {showNumberFields && (
+            <FormControl fullWidth margin="normal">
+              <Controller
+                name="number1"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Number 1"
+                    type="number"
+                    fullWidth
+                    required
+                  />
+                )}
+              />
+            </FormControl>
+          )}
 
-          <FormControl fullWidth margin="normal">
-            <Controller
-              name="number2"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Number 2"
-                  type="number"
-                  fullWidth
-                  required
-                />
-              )}
-            />
-          </FormControl>
+          {showNumberFields && (
+            <FormControl fullWidth margin="normal">
+              <Controller
+                name="number2"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Number 2"
+                    type="number"
+                    fullWidth
+                    required
+                    disabled={isNumber2Disabled}
+                  />
+                )}
+              />
+            </FormControl>
+          )}
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Operation</InputLabel>
@@ -100,12 +115,16 @@ export default function Page() {
               name="operation"
               control={control}
               render={({ field }) => (
-                <Select {...field} label="Operation">
+                <Select {...field} label="Operation" onChange={(event) => {
+                  field.onChange(event);
+                  handleOperationChange(event as SelectChangeEvent<Operation>);
+                }}>
                   <MenuItem value={Operation.ADDITION}>Addition</MenuItem>
                   <MenuItem value={Operation.SUBTRACTION}>Subtraction</MenuItem>
                   <MenuItem value={Operation.MULTIPLICATION}>Multiplication</MenuItem>
                   <MenuItem value={Operation.DIVISION}>Division</MenuItem>
                   <MenuItem value={Operation.SQUARE_ROOT}>Square Root</MenuItem>
+                  <MenuItem value={Operation.RANDOM_STRING}>Generate String</MenuItem>
                 </Select>
               )}
             />
@@ -118,7 +137,7 @@ export default function Page() {
             fullWidth
             sx={{ mt: 2 }}
           >
-            Calculate
+            {buttonText}
           </Button>
 
           {result !== null && (
