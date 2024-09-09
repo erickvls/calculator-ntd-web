@@ -27,12 +27,17 @@ export default function Page() {
     }
   });
 
-  const { calculate } = useCalculator();
+  const { calculate, generateString } = useCalculator();
 
   const onSubmit = async ({ number1, number2, operation }: Inputs) => {
     try {
-      const { operationResponse } = await calculate(number1, number2, operation);
-      setResult(operationResponse);
+      if (operation === Operation.RANDOM_STRING) {
+        const { operationResponse } = await generateString();
+        setResult(operationResponse);
+      } else {
+        const { operationResponse } = await calculate(number1, number2, operation);
+        setResult(operationResponse);
+      }
     } catch (error) {
       let errorMessage = 'Something went wrong';
       if (error instanceof Error) {
