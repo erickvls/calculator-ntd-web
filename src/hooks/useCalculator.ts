@@ -28,7 +28,12 @@ export const useCalculator = () => {
         })
     }
 
+    const generateString = (): Promise<CalculatorResponse> => {
+        return api('/calculator/generate/', 'GET');
+    };
+
     return {
-        calculate
+        calculate,
+        generateString
     }
 }
