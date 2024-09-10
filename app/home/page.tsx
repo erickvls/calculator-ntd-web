@@ -1,6 +1,7 @@
 'use client';
 
 import AuthenticatedLayout from "@/src/components/AuthenticatedLayout";
+import { useUserContext } from "@/src/context/UserContext";
 import { Operation, useCalculator } from "@/src/hooks/useCalculator";
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from "@mui/material";
 import { useState } from "react";
@@ -28,16 +29,19 @@ export default function Page() {
   });
 
   const { calculate, generateString } = useCalculator();
-
+  const { setBalance } = useUserContext();
   const onSubmit = async ({ number1, number2, operation }: Inputs) => {
     try {
       if (operation === Operation.RANDOM_STRING) {
-        const { operationResponse } = await generateString();
+        const { operationResponse, userBalance } = await generateString();
         setResult(operationResponse);
+        setBalance(userBalance);
       } else {
-        const { operationResponse } = await calculate(number1, number2, operation);
+        const { operationResponse, userBalance } = await calculate(number1, number2, operation);
         setResult(operationResponse);
+        setBalance(userBalance);
       }
+
     } catch (error) {
       let errorMessage = 'Something went wrong';
       if (error instanceof Error) {

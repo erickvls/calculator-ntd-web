@@ -15,25 +15,29 @@ import PersonIcon from '@mui/icons-material/Person';
 import WalletIcon from '@mui/icons-material/Wallet';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useCredits } from '../hooks/useCredits';
+import { useUserContext } from '../context/UserContext';
 
 const pages = [
     { name: 'Calculator', path: '/home' },
     { name: 'Records', path: '/records' },
 ];
 
-
 export default function Header() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [initialBalanceLoaded, setInitialBalanceLoaded] = React.useState(false);
     const [accountInfo, setAccountInfo] = React.useState<{ email: string; balance: string } | null>(null);
     const { getCredits } = useCredits();
+    const { balance, setBalance } = useUserContext();
 
     React.useEffect(() => {
         getCredits().then((data) => {
             setAccountInfo(data);
+            setBalance(data.balance);
+            setInitialBalanceLoaded(true);
         }).catch((error) => {
             console.error("Erro fetching account information", error);
         });
-    }, [getCredits]);
+    }, [getCredits, setBalance]);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -142,7 +146,7 @@ export default function Header() {
                             </Link>
                         ))}
                     </Box>
-                    {accountInfo && (
+                    {initialBalanceLoaded && accountInfo && (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <PersonIcon sx={{ mr: 1 }} />
@@ -153,7 +157,7 @@ export default function Header() {
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <WalletIcon sx={{ mr: 1 }} />
                                 <Typography sx={{ textAlign: 'center', color: 'inherit' }}>
-                                    ${accountInfo.balance}
+                                    ${balance}
                                 </Typography>
                             </Box>
                             <Box>

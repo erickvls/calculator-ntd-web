@@ -1,3 +1,4 @@
+import { UserProvider } from "@/src/context/UserContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ToastContainer } from 'react-toastify';
@@ -19,7 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className} style={{ backgroundColor: '#f5f5f5', margin: 0, padding: 0 }}>
         <ToastContainer style={{ marginTop: 60 }} />
-        {children}
+        <UserProvider>{children}</UserProvider>
+
       </body>
     </html>
   );
