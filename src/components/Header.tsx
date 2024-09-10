@@ -11,6 +11,10 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import Link from 'next/link';
+import PersonIcon from '@mui/icons-material/Person';
+import WalletIcon from '@mui/icons-material/Wallet';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useCredits } from '../hooks/useCredits';
 
 const pages = [
     { name: 'Calculator', path: '/home' },
@@ -20,6 +24,16 @@ const pages = [
 
 export default function Header() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [accountInfo, setAccountInfo] = React.useState<{ email: string; balance: string } | null>(null);
+    const { getCredits } = useCredits();
+
+    React.useEffect(() => {
+        getCredits().then((data) => {
+            setAccountInfo(data);
+        }).catch((error) => {
+            console.error("Erro fetching account information", error);
+        });
+    }, [getCredits]);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -29,6 +43,13 @@ export default function Header() {
         setAnchorElNav(null);
     };
 
+    const getUsername = (email: string) => {
+        return email.split('@')[0];
+    };
+
+    const handleLogout = () => {
+        console.log('Logout clicked');
+    };
 
     return (
         <AppBar position="static">
@@ -121,11 +142,31 @@ export default function Header() {
                             </Link>
                         ))}
                     </Box>
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Typography sx={{ textAlign: 'center', color: 'inherit' }}>
-                            USER
-                        </Typography>
-                    </Box>
+                    {accountInfo && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <PersonIcon sx={{ mr: 1 }} />
+                                <Typography sx={{ textAlign: 'center', color: 'inherit' }}>
+                                    {getUsername(accountInfo.email)}
+                                </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <WalletIcon sx={{ mr: 1 }} />
+                                <Typography sx={{ textAlign: 'center', color: 'inherit' }}>
+                                    ${accountInfo.balance}
+                                </Typography>
+                            </Box>
+                            <Box>
+                                <Button
+                                    onClick={handleLogout}
+                                    sx={{ my: 2, color: 'white', display: 'flex', alignItems: 'center' }}
+                                    startIcon={<LogoutIcon />}
+                                >
+                                    Logout
+                                </Button>
+                            </Box>
+                        </Box>
+                    )}
                 </Toolbar>
             </Container>
         </AppBar>
