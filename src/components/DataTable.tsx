@@ -1,103 +1,88 @@
-import * as React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React, { useEffect, useState } from 'react';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useRecords } from '../hooks/useRecords';
 
-const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'cost', headerName: 'Cost', width: 70 },
-    {
-        field: 'result',
-        headerName: 'Result',
-        type: 'number',
-        width: 90,
-    },
-    {
-        field: 'createdAt',
-        headerName: 'Date',
-        width: 160,
-        valueGetter: (value, row) => new Date(value).toLocaleDateString("en-US"),
-    },
-];
+interface Record {
+    id: string;
+    userBalance: string;
+    operationResponse: string;
+    date: string;
+    operationType: string;
+}
 
-const rows = [
-    {
-        "id": 1,
-        "cost": 427.81,
-        "result": 43.4,
-        "createdAt": 1705445541667
-    },
-    {
-        "id": 2,
-        "cost": 362.18,
-        "result": 42.46,
-        "createdAt": 1694386341667
-    },
-    {
-        "id": 3,
-        "cost": 404.75,
-        "result": 64.03,
-        "createdAt": 1725490341667
-    },
-    {
-        "id": 4,
-        "cost": 243.25,
-        "result": 21.85,
-        "createdAt": 1699915941667
-    },
-    {
-        "id": 5,
-        "cost": 190.47,
-        "result": 17.44,
-        "createdAt": 1712184741667
-    },
-    {
-        "id": 6,
-        "cost": 427.11,
-        "result": 12.99,
-        "createdAt": 1720824741667
-    },
-    {
-        "id": 7,
-        "cost": 69.94,
-        "result": 15.5,
-        "createdAt": 1717541541667
-    },
-    {
-        "id": 8,
-        "cost": 306.92,
-        "result": 27.59,
-        "createdAt": 1723157541667
-    },
-    {
-        "id": 9,
-        "cost": 400.04,
-        "result": 52.34,
-        "createdAt": 1695077541667
-    },
-    {
-        "id": 10,
-        "cost": 450.0,
-        "result": 18.85,
-        "createdAt": 1707432741667
+export default function BasicTable() {
+    const { getRecords } = useRecords();
+    const [rows, setRows] = useState<Record[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchRecords = async () => {
+            try {
+                const response = await getRecords();
+                const records = response.content.map(record => ({
+                    id: record.id,
+                    userBalance: record.userBalance,
+                    operationResponse: record.operationResponse,
+                    date: new Date(record.date).toLocaleDateString("en-US"),
+                    operationType: record.operationType
+                }));
+                setRows(records);
+            } catch (err) {
+                console.error('Failed to fetch records:', err);
+                setError('Failed to load records');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRecords();
+    }, [getRecords]);
+
+    if (loading) {
+        return <CircularProgress />;
     }
-];
 
-const paginationModel = { page: 0, pageSize: 5 };
-
-export default function DataTable() {
-
-
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
-        <Paper sx={{ height: 400, width: '100%' }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                pageSizeOptions={[5, 10]}
-                checkboxSelection
-                style={{ border: 0 }}
-            />
-        </Paper>
+        <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell align="right">User Balance</TableCell>
+                        <TableCell align="right">Operation Response</TableCell>
+                        <TableCell align="right">Date</TableCell>
+                        <TableCell align="right">Operation Type</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {rows.map((row) => (
+                        <TableRow
+                            key={row.id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                            <TableCell component="th" scope="row">
+                                {row.id}
+                            </TableCell>
+                            <TableCell align="right">{row.userBalance}</TableCell>
+                            <TableCell align="right">{row.operationResponse}</TableCell>
+                            <TableCell align="right">{row.date}</TableCell>
+                            <TableCell align="right">{row.operationType}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
