@@ -19,30 +19,23 @@ export const useUser = () => {
             setCookie(USER_TOKEN_KEY, response.token, 1);
             router.replace('/home');
         }
-    }
+    };
 
-    const register = (email: string, password: string) => {
-        return api('/auth/register', 'POST', {
-            username: email,
-            password
-        }).then(handleSuccessfulAuthentication)
-    }
+    const authenticate = (path: string, email: string, password: string) => {
+        return api('/auth/' + path, 'POST', { username: email, password }).then(handleSuccessfulAuthentication);
+    };
 
-    const login = (email: string, password: string) => {
-        return api('/auth/login', 'POST', {
-            username: email,
-            password
-        }).then(handleSuccessfulAuthentication)
-    }
+    const register = (email: string, password: string) => authenticate('register', email, password);
+    const login = (email: string, password: string) => authenticate('login', email, password);
 
     const logout = () => {
         deleteCookie(USER_TOKEN_KEY);
         router.push('/');
-    }
+    };
 
     return {
         register,
         login,
         logout,
-    }
-}
+    };
+};

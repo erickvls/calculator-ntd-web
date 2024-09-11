@@ -26,9 +26,9 @@ export const api = async (path: string, method: 'POST' | 'GET' | 'DELETE', body:
         });
 
         if (!result.ok) {
-            const error = await result.json(); //  It reads the error body
+            const error = await result.json();
             const firstErrorMessage = error?.errors?.field?.[0]?.message || 'Something went wrong'; // Get the first message from error array field
-            throw new Error(firstErrorMessage); // throw the error with the message
+            throw new Error(firstErrorMessage);
         }
 
         if (method === 'DELETE') {

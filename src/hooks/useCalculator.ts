@@ -1,4 +1,3 @@
-import { useRouter } from "next/navigation"
 import { api } from "../services/api.service"
 
 export enum Operation {
