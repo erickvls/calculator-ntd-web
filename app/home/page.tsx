@@ -14,7 +14,7 @@ type Inputs = {
   operation: Operation;
 };
 
-export default function Page() {
+export default function Home() {
   const [result, setResult] = useState<string | null>(null);
   const [isNumber2Disabled, setIsNumber2Disabled] = useState<boolean>(false);
   const [showNumberFields, setShowNumberFields] = useState<boolean>(true);

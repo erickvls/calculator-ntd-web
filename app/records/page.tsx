@@ -5,7 +5,7 @@ import AuthenticatedLayout from "@/src/components/AuthenticatedLayout";
 import DataTable from "@/src/components/DataTable";
 import { Box, Container } from "@mui/material";
 
-export default function Page() {
+export default function Records() {
   return (
     <AuthenticatedLayout>
       <Container style={{
