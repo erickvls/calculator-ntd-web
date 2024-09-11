@@ -32,21 +32,14 @@ export default function Home() {
   const { setBalance } = useUserContext();
   const onSubmit = async ({ number1, number2, operation }: Inputs) => {
     try {
-      if (operation === Operation.RANDOM_STRING) {
-        const { operationResponse, userBalance } = await generateString();
-        setResult(operationResponse);
-        setBalance(userBalance);
-      } else {
-        const { operationResponse, userBalance } = await calculate(number1, number2, operation);
-        setResult(operationResponse);
-        setBalance(userBalance);
-      }
+      const { operationResponse, userBalance } = operation === Operation.RANDOM_STRING
+        ? await generateString()
+        : await calculate(number1, number2, operation);
 
+      setResult(operationResponse);
+      setBalance(userBalance);
     } catch (error) {
-      let errorMessage = 'Something went wrong';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong';
       toast.error(errorMessage);
     }
   };
