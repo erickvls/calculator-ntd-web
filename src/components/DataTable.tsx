@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { useRecords } from '../hooks/useRecords';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete'; // Importe o ícone de lixeira
+
+import { getColumns } from '../utils/getColumns';
+import { DeleteDialog } from './DeleteDialog';
 
 interface Record {
     id: string;
@@ -18,20 +19,20 @@ export default function RecordsTable() {
     const [rows, setRows] = useState<Record[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [page, setPage] = useState(0);  // Página atual
-    const [sort, setSort] = useState('date,desc');  // Critério de ordenação
-    const [totalElements, setTotalElements] = useState(0);  // Total de registros
-    const [pageSize, setPageSize] = useState(10);  // Itens por página
+    const [page, setPage] = useState(0);
+    const [sort, setSort] = useState('date,desc');
+    const [totalElements, setTotalElements] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
 
-    const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // ID do registro para deletar
-    const [openDialog, setOpenDialog] = useState(false); // Controla a abertura do diálogo
+    const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+    const [openDialog, setOpenDialog] = useState(false);
 
     const fetchRecords = async (page: number, sort: string, size: number) => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await getRecords(page, size, sort);  // Página e tamanho dinâmicos
+            const response = await getRecords(page, size, sort);
             const records = response.content.map((record: Record) => ({
                 id: record.id,
                 userBalance: record.userBalance,
@@ -40,7 +41,7 @@ export default function RecordsTable() {
                 operationType: record.operationType,
             }));
             setRows(records);
-            setTotalElements(response.totalElements);  // Atualiza o total de registros
+            setTotalElements(response.totalElements);
         } catch (error) {
             console.error('Failed to fetch records:', error);
             setError('Failed to load records');
@@ -62,7 +63,7 @@ export default function RecordsTable() {
         if (confirmDelete) {
             try {
                 await deleteRecord(confirmDelete);
-                fetchRecords(page, sort, pageSize); // Atualiza a lista após a exclusão
+                fetchRecords(page, sort, pageSize);
             } catch (error) {
                 console.error('Failed to delete record:', error);
                 setError('Failed to delete record');
@@ -83,26 +84,7 @@ export default function RecordsTable() {
         setConfirmDelete(null);
     };
 
-    const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', flex: 1 },
-        { field: 'userBalance', headerName: 'User Balance', flex: 1 },
-        { field: 'operationResponse', headerName: 'Operation Response', flex: 1 },
-        { field: 'date', headerName: 'Date', flex: 1 },
-        { field: 'operationType', headerName: 'Operation Type', flex: 1 },
-        {
-            field: 'action',
-            headerName: 'Action',
-            flex: 1,
-            renderCell: (params) => (
-                <IconButton
-                    color="error"
-                    onClick={() => handleOpenDialog(params.row.id)}
-                >
-                    <DeleteIcon /> {/* Ícone de lixeira */}
-                </IconButton>
-            ),
-        },
-    ];
+    const columns = getColumns(handleOpenDialog);
 
     if (loading) {
         return <CircularProgress />;
@@ -138,16 +120,11 @@ export default function RecordsTable() {
                 autoHeight={true}
             />
 
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>Confirm Deletion</DialogTitle>
-                <DialogContent>
-                    Are you sure you want to delete this record?
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button onClick={handleDelete} color="error">Delete</Button>
-                </DialogActions>
-            </Dialog>
+            <DeleteDialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                onConfirm={handleDelete}
+            />
         </>
     );
 }

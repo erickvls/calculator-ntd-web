@@ -17,7 +17,6 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useCredits } from '../hooks/useCredits';
 import { useUserContext } from '../context/UserContext';
 import { useUser } from '../hooks/useUser';
-import { useRouter } from 'next/navigation';
 
 const pages = [
     { name: 'Calculator', path: '/home' },
@@ -32,7 +31,6 @@ export default function Header() {
     const { balance, setBalance } = useUserContext();
     const [isMounted, setIsMounted] = React.useState(false);
     const { logout } = useUser();
-    const router = useRouter();
     React.useEffect(() => {
         if (!isMounted) {
             setIsMounted(true);
@@ -89,7 +87,7 @@ export default function Header() {
                             textDecoration: 'none',
                         }}
                     >
-                        LOGO
+                        APP
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -146,7 +144,7 @@ export default function Header() {
                             textDecoration: 'none',
                         }}
                     >
-                        LOGO
+                        APP
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
