@@ -100,24 +100,6 @@ export default function Home() {
             </FormControl>
           )}
 
-          {showNumberFields && (
-            <FormControl fullWidth margin="normal">
-              <Controller
-                name="number2"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Number 2"
-                    type="number"
-                    fullWidth
-                    required
-                    disabled={isNumber2Disabled}
-                  />
-                )}
-              />
-            </FormControl>
-          )}
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Operation</InputLabel>
@@ -139,6 +121,24 @@ export default function Home() {
               )}
             />
           </FormControl>
+          {showNumberFields && (
+            <FormControl fullWidth margin="normal">
+              <Controller
+                name="number2"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Number 2"
+                    type="number"
+                    fullWidth
+                    required
+                    disabled={isNumber2Disabled}
+                  />
+                )}
+              />
+            </FormControl>
+          )}
 
           <Button
             type="submit"
