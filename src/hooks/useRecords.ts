@@ -24,16 +24,24 @@ interface ApiResponse {
         offset: number;
         paged: boolean;
         unpaged: boolean;
-    };
+    },
+    totalElements: number,
+    totalPages: number,
+    size: number
 }
 
 export const useRecords = () => {
 
-    const getRecords = (): Promise<ApiResponse> => {
-        return api('/records', 'GET');
+    const getRecords = (page: number = 0, size: number = 10, sort: string = 'date,desc'): Promise<ApiResponse> => {
+        return api(`/records?page=${page}&size=${size}&sort=${sort}`, 'GET');
+    };
+
+    const deleteRecord = (id: string): Promise<void> => {
+        return api(`/records/${id}`, 'DELETE');
     };
 
     return {
         getRecords,
+        deleteRecord
     }
 }

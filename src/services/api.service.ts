@@ -7,7 +7,7 @@ export const getCookie = (name: string) => {
     return null;
 };
 
-export const api = async (path: string, method: 'POST' | 'GET', body: object = {}) => {
+export const api = async (path: string, method: 'POST' | 'GET' | 'DELETE', body: object = {}) => {
     const headers: Record<string, string> = {
         'Content-Type': 'application/json',
     };
@@ -29,6 +29,10 @@ export const api = async (path: string, method: 'POST' | 'GET', body: object = {
             const error = await result.json(); //  It reads the error body
             const firstErrorMessage = error?.errors?.field?.[0]?.message || 'Something went wrong'; // Get the first message from error array field
             throw new Error(firstErrorMessage); // throw the error with the message
+        }
+
+        if (method === 'DELETE') {
+            return;
         }
 
         return result.json();

@@ -1,9 +1,9 @@
 'use client';
 
 import AuthenticatedLayout from "@/src/components/AuthenticatedLayout";
-import Box from "@/src/components/Box";
+
 import DataTable from "@/src/components/DataTable";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 
 export default function Page() {
   return (
@@ -13,9 +13,16 @@ export default function Page() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 20
+        marginTop: 20,
       }}>
-        <Box size="lg">
+        <Box sx={{
+          backgroundColor: '#fff',
+          padding: 4,
+          borderRadius: 2,
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+          width: '100%',
+
+        }}>
           <DataTable />
         </Box>
       </Container>

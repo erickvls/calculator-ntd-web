@@ -16,6 +16,8 @@ import WalletIcon from '@mui/icons-material/Wallet';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useCredits } from '../hooks/useCredits';
 import { useUserContext } from '../context/UserContext';
+import { useUser } from '../hooks/useUser';
+import { useRouter } from 'next/navigation';
 
 const pages = [
     { name: 'Calculator', path: '/home' },
@@ -28,16 +30,28 @@ export default function Header() {
     const [accountInfo, setAccountInfo] = React.useState<{ email: string; balance: string } | null>(null);
     const { getCredits } = useCredits();
     const { balance, setBalance } = useUserContext();
-
+    const [isMounted, setIsMounted] = React.useState(false);
+    const { logout } = useUser();
+    const router = useRouter();
     React.useEffect(() => {
-        getCredits().then((data) => {
-            setAccountInfo(data);
-            setBalance(data.balance);
-            setInitialBalanceLoaded(true);
-        }).catch((error) => {
-            console.error("Erro fetching account information", error);
-        });
-    }, [getCredits, setBalance]);
+        if (!isMounted) {
+            setIsMounted(true);
+
+            const fetchCredits = async () => {
+                try {
+                    const response = await getCredits();
+                    setAccountInfo(response);
+                    setBalance(response.balance);
+                    setInitialBalanceLoaded(true);
+                } catch (error) {
+                    console.error("Erro fetching account information", error);
+                }
+            };
+
+            fetchCredits();
+        }
+
+    }, [getCredits, setBalance, isMounted]);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -52,7 +66,7 @@ export default function Header() {
     };
 
     const handleLogout = () => {
-        console.log('Logout clicked');
+        logout();
     };
 
     return (

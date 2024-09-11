@@ -37,7 +37,7 @@ export const useUser = () => {
 
     const logout = () => {
         deleteCookie(USER_TOKEN_KEY);
-        router.replace('/');
+        router.push('/');
     }
 
     return {
