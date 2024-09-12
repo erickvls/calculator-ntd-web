@@ -63,7 +63,7 @@ To run the application locally:
 
 2. Create an .env file at the root of the project with the following content:
 
-   NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
+   NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
 
 3. Start the application using Docker Compose:
 
