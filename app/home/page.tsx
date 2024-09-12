@@ -82,24 +82,6 @@ export default function Home() {
           width: '100%',
           maxWidth: 400,
         }}>
-          {showNumberFields && (
-            <FormControl fullWidth margin="normal">
-              <Controller
-                name="number1"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Number 1"
-                    type="number"
-                    fullWidth
-                    required
-                  />
-                )}
-              />
-            </FormControl>
-          )}
-
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Operation</InputLabel>
@@ -121,6 +103,27 @@ export default function Home() {
               )}
             />
           </FormControl>
+
+          {showNumberFields && (
+            <FormControl fullWidth margin="normal">
+              <Controller
+                name="number1"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Number 1"
+                    type="number"
+                    fullWidth
+                    required
+                  />
+                )}
+              />
+            </FormControl>
+          )}
+
+
+
           {showNumberFields && (
             <FormControl fullWidth margin="normal">
               <Controller
